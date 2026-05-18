@@ -1,10 +1,13 @@
-EXO: Rating and Billing
-======================
+EXO: Exosculat Exoskeleton
+==========================
 
 [![Hex pm](https://img.shields.io/hexpm/v/exosculat.svg?style=flat)](https://hex.pm/packages/exosculat)
 [![Actions Status](https://github.com/erpuno/exo/workflows/mix/badge.svg)](https://github.com/erpuno/exo/actions)
 
-EXO (EXOSCULAT, Latin for "account") is an automated system for service accounting, rating, and billing. EXO is a universal account manager (customer accounts) that contains a history of rated transactions. Accounts are controlled by BPMN processes whose activities are defined by Erlang functions. EXO, as an example of [ERP.UNO](https://erp.uno), can be used as a prototype for building billing systems, banks, and other accounting systems.
+EXO (EXOSCULAT, Latin for "account") is an automated system for service accounting, rating, and billing.
+EXO is a universal account manager (customer accounts) that contains a history of rated transactions.
+Accounts are controlled by BPMN processes whose activities are defined by Erlang functions.
+EXO, as an example of [ERP.UNO](https://erp.uno), can be used as a prototype for building billing systems, banks, and other accounting systems.
 
 Getting Started
 ---------------
