@@ -5,6 +5,7 @@ config :n2o,
   app: :exosculat,
   mq: :n2o_syn,
   port: 8051,
+  trace: false,
   tables: [:cookies, :file, :caching, :async],
   protocols: [:n2o_heart, :nitro_n2o, :n2o_ftp],
   routes: EXO.Route
