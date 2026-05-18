@@ -26,12 +26,11 @@ defmodule EXO.Mixfile do
     ]
 
   def deps() do
-    [
+    deps = [
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:plug, "~> 1.15.3"},
       {:bandit, "~> 1.0"},
       {:websock_adapter, "~> 0.5"},
-      {:rocksdb, "~> 2.6.2", override: true},
       # Transitional Erlang-Elixir Tier Stack
       {:form, "~> 11.4.15"},
       {:bpe, "~> 8.12.3"},
@@ -39,6 +38,14 @@ defmodule EXO.Mixfile do
       {:kvs, "~> 10.8.3"},
       {:n2o, "~> 10.12.4"},
       {:syn, "2.1.0"}
+    ]
+
+    if System.get_env("KVS_BACKEND") == "rocksdb" do
+      deps ++ [{:rocksdb, "~> 2.6.2", override: true}]
+    else
+      deps
+    end
+    [
     ]
   end
 end

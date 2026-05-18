@@ -4,7 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      KVS_BACKEND: rocksdb
+      KVS_BACKEND: mnesia
     steps:
     - uses: actions/checkout@v4
     - name: Install system dependencies
