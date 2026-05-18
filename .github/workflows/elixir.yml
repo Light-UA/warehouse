@@ -3,18 +3,26 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      KVS_BACKEND: rocksdb
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y liblz4-dev libsnappy-dev zlib1g-dev libbz2-dev libzstd-dev build-essential libcsv3 libcsv-dev cmake
     - uses: erlef/setup-beam@v1
       with:
-        otp-version: 22.x
-        elixir-version: 1.11.x
-    - name: CMake
-      run: sudo apt-get install -y cmake
+        otp-version: 28.x
+        elixir-version: 1.18.x
     - name: Dependencies
       run: |
         mix local.rebar --force
         mix local.hex --force
         mix deps.get
+        mix deps.clean --unused
     - name: Compilation
       run: mix compile
+    - name: Test
+      run: mix test
+

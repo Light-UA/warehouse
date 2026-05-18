@@ -27,7 +27,7 @@ defmodule EXO.Mixfile do
 
   def deps() do
     [
-      {:ex_doc, "~> 0.29.0", only: :dev},
+      {:ex_doc, ">= 0.0.0", only: :dev},
       {:plug, "~> 1.15.3"},
       {:bandit, "~> 1.0"},
       {:websock_adapter, "~> 0.5"},
