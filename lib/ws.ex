@@ -28,20 +28,14 @@ defmodule Sample.WS do
 
     try do
       module = Keyword.get(args, :module)
-
       if is_nil(module) do
-        # Plug/Bandit startup validation
         {:ok, N2O.cx(module: nil, req: [])}
       else
-        # WebSocket initialization
         req = Keyword.get(args, :req, %{})
         cookies = Map.get(req, :cookies, [])
-
         token =
-          case :lists.keyfind("X-Auth-Token", 1, cookies) do
-            {_, v} ->
-              v
-
+          case :lists.keyfind(<<"X-Auth-Token">>, 1, cookies) do
+            {_, v} -> v
             _ -> ""
           end
 

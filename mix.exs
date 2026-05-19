@@ -37,7 +37,7 @@ defmodule EXO.Mixfile do
       {:plug, "~> 1.15.3"},
       {:bandit, "~> 1.0"},
       {:websock_adapter, "~> 0.5"},
-      {:rocksdb, github: "emqx/erlang-rocksdb", tag: "1.8.0-emqx-11", override: true},
+      {:rocksdb, "~> 2.6.2"},
       # Transitional Erlang-Elixir Tier Stack
       {:form, "~> 11.4.15"},
       {:bpe, "~> 8.12.4"},

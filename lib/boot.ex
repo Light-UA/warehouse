@@ -4,10 +4,10 @@ defmodule EXO.Boot do
   def clients() do
     [] = :kvs.all(~c"/exo/clients")
     date = :calendar.now_to_datetime(:erlang.timestamp())
-
+    ids = :lists.map(fn x-> :timer.sleep(1) ; :kvs.seq([],[]) end, :lists.seq(1,6))
     sample = [
       EXO.client(
-        id: :kvs.seq([], []),
+        id: :lists.nth(1,ids),
         names: "Максим",
         phone: "1",
         surnames: "Сохацький",
@@ -16,7 +16,7 @@ defmodule EXO.Boot do
         date: date
       ),
       EXO.client(
-        id: :kvs.seq([], []),
+        id: :lists.nth(2,ids),
         names: "Антон",
         phone: "2",
         surnames: "Волошко",
@@ -25,7 +25,7 @@ defmodule EXO.Boot do
         date: date
       ),
       EXO.client(
-        id: :kvs.seq([], []),
+        id: :lists.nth(3,ids),
         names: "МВС",
         phone: "3",
         surnames: "",
@@ -34,7 +34,7 @@ defmodule EXO.Boot do
         date: date
       ),
       EXO.client(
-        id: :kvs.seq([], []),
+        id: :lists.nth(4,ids),
         names: "ГСЦ",
         phone: "4",
         surnames: "",
@@ -43,7 +43,7 @@ defmodule EXO.Boot do
         date: date
       ),
       EXO.client(
-        id: :kvs.seq([], []),
+        id: :lists.nth(5,ids),
         names: "ЦІТ",
         phone: "5",
         surnames: "",
@@ -52,7 +52,7 @@ defmodule EXO.Boot do
         date: date
       ),
       EXO.client(
-        id: :kvs.seq([], []),
+        id: :lists.nth(6,ids),
         names: "ДНДІ",
         phone: "6",
         surnames: "",
