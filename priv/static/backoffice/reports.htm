@@ -26,37 +26,42 @@
    <article>
         <section>
             <h2>ЗВІТНІСТЬ</h2>
-            <p>Статистика піпдприємства, CashFlow та P&L звітність.</p>
+            <p>Статистика підприємства, CashFlow та P&L звітність.</p>
         </section>
    </article>
 </aside>
 
 <main>
-   <section>
-            <table class="table" align="center"><thead><tr class="trGroup"><td width="33%"><h3>Контракти</h3></td><td width="33%"><h3>Прибуток</h3></td><td width="33%"><h3>Регулятори</h3></td></tr></thead></table><br />
-                 <table><tbody><tr valign="top"><td>
-                      <div class="td">
-                           <div class="table">
-                                <div id="investmentsHead" class="trGroup"></div>
-                                <div id="investmentsRow" class="trGroup"></div>
-                           </div>
-                      </div>
-                 </td><td>
-                      <div class="td">
-                           <div class="table">
-                                <div id="incomeHead" class="trGroup"></div>
-                                <div id="incomeRow" class="trGroup"></div>
-                           </div>
-                      </div>
-                 </td><td>
-                      <div class="td">
-                           <div class="table">
-                                <div id="outcomeHead" class="trGroup"></div>
-                                <div id="outcomeRow" class="trGroup"></div>
-                           </div>
-                      </div>
-                 </td></tr></tbody></table>
-    </section>
+   <section class="reports-section">
+        <div class="reports-grid">
+             <!-- Contracts Card -->
+             <div class="report-card">
+                  <h3>Контракти</h3>
+                  <div class="table">
+                       <div id="investmentsHead" class="trGroup"></div>
+                       <div id="investmentsRow" class="trGroup"></div>
+                  </div>
+             </div>
+
+             <!-- Income Card -->
+             <div class="report-card">
+                  <h3>Прибуток</h3>
+                  <div class="table">
+                       <div id="incomeHead" class="trGroup"></div>
+                       <div id="incomeRow" class="trGroup"></div>
+                  </div>
+             </div>
+
+             <!-- Regulations Card -->
+             <div class="report-card">
+                  <h3>Регулятори</h3>
+                  <div class="table">
+                       <div id="outcomeHead" class="trGroup"></div>
+                       <div id="outcomeRow" class="trGroup"></div>
+                  </div>
+             </div>
+        </div>
+   </section>
 </main>
 
 

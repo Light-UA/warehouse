@@ -42,11 +42,7 @@ defmodule Sample.WS do
             {_, v} ->
               v
 
-            _ ->
-              case :lists.keyfind(<<"X-Auth-Token">>, 1, cookies) do
-                {_, v} -> v
-                _ -> ""
-              end
+            _ -> ""
           end
 
         sid =
