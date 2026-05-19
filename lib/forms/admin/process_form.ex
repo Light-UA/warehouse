@@ -23,7 +23,7 @@ defmodule BPE.Create do
           id: :form.atom([:pi, :proceed]),
           title: "Створення",
           class: [:button, :sgreen],
-          sources: [:process_type],
+          sources: [:process_type_process_none],
           postback: {:Spawn, []}
         )
       ],

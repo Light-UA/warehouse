@@ -9,6 +9,14 @@ defmodule Account.Form do
   def new(name, _program, _) do
     :erlang.put(:type_account_none, :type)
 
+    programs = :kvs.all(~c"/exo/tariffs")
+    options = Enum.with_index(programs)
+    |> Enum.map(fn {x, index} ->
+      type = EXO.program(x, :type)
+      name = EXO.program(x, :name)
+      FORM.opt(name: EXO.program(x, :id), checked: index == 0, title: "#{type}-#{name}")
+    end)
+
     FORM.document(
       name: :form.atom([:account, name]),
       sections: [FORM.sec(name: ["Створення рахунку: "])],
@@ -27,9 +35,10 @@ defmodule Account.Form do
           class: [:button, :sgreen],
           sources: [
             :name_account_none,
+            :edrpou_account_none,
             :type_account_none,
-            :date_account_none,
-            :formula_account_none
+            :program_account_none,
+            :date_account_none
           ],
           postback: {:CreateAccount, :form.atom([:account, name])}
         )
@@ -70,7 +79,7 @@ defmodule Account.Form do
           type: :select,
           default: :internet,
           postback: {:ProgramAccount, :form.atom([:account, name])},
-          options: []
+          options: options
         ),
         FORM.field(
           id: :date,
