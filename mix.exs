@@ -7,7 +7,7 @@ defmodule EXO.Mixfile do
       version: "4.5.6",
       description: "EXO Exosculat Exoskeleton",
       package: package(),
- overrides: [
+      overrides: [
       {:rocksdb,
        [
          {:pre_hooks, [{:compile, "patch -N -p1 < ../../../../patches/rocksdb-snappy.patch || true"}]}
