@@ -200,75 +200,154 @@ defmodule EXO.Boot do
       :lists.map(fn x -> :kvs.append(x, ~c"/itsm/cis") end, sample_cis)
     end
 
-    # Active outage (incident) on Internet (1 item)
-    if :kvs.all(~c"/itsm/incidents") == [] do
+    # ── Step 1: ensure req exists and get its id ─────────────────────────────
+    req_id =
+      case :kvs.all(~c"/itsm/reqs") do
+        [] ->
+          :timer.sleep(1)
+          rid = :kvs.seq([], [])
+          date = :calendar.now_to_datetime(:erlang.timestamp())
+          req = EXO.itsm_req(
+            id: rid,
+            initiator: "3",
+            service: "internet",
+            title: "Проблеми зі зв'язком в офісі МВС",
+            description: "Не працює VPN-з'єднання з центральним сервером. Зачіпає 40 робочих місць.",
+            status: :in_progress,
+            created_at: date,
+            closed_at: []
+          )
+          :kvs.append(req, ~c"/itsm/reqs")
+
+          # BPE workflow for this req
+          case :bpe.start(BPE.Incident.def(), [req]) do
+            {:ok, proc_id} ->
+              :bpe.next(proc_id) # New -> Triaje
+              :bpe.next(proc_id) # Triaje -> Work
+              Logger.info("Seeded BPE incident workflow #{proc_id} in Work state for req #{rid}")
+            err ->
+              Logger.warning("Failed to start BPE workflow in boot: #{inspect(err)}")
+          end
+
+          rid
+
+        [existing | _] ->
+          EXO.itsm_req(existing, :id)
+      end
+
+    # ── Step 2: seed 6 incidents; first one links to req ─────────────────────
+    # Re-seed whenever count < 6 (wipe old first to avoid list corruption)
+    current_incidents = :kvs.all(~c"/itsm/incidents")
+    if length(current_incidents) < 6 do
+      Enum.each(current_incidents, fn i ->
+        :kvs.delete(~c"/itsm/incidents", EXO.itsm_incident(i, :id))
+      end)
+      if current_incidents != [] do
+        :kvs.delete(:writer, ~c"/itsm/incidents")
+      end
+
+      inc_ids = :lists.map(fn _ -> :timer.sleep(1); :kvs.seq([], []) end, :lists.seq(1, 6))
+
+      # NOTE: req_id goes directly into incident #1 — no post-hoc patching
       sample_incidents = [
         EXO.itsm_incident(
-          id: :kvs.seq([], []),
-          req: "INC-001",
+          id: :lists.nth(1, inc_ids),
+          req: req_id,
           service: "internet",
           priority: :high,
           status: :in_progress,
-          assignee: "Черговий інженер",
-          description: "Спостерігається падіння швидкості та обриви зв'язку через аварію на лінії."
+          assignee: "Іваненко О.П.",
+          description: "Падіння швидкості та обриви зв'язку через аварію на магістральній лінії.",
+          resolution: "",
+          slm_deadline: []
+        ),
+        EXO.itsm_incident(
+          id: :lists.nth(2, inc_ids),
+          req: [],
+          service: "electricity",
+          priority: :critical,
+          status: :new,
+          assignee: "Петренко В.М.",
+          description: "Повне відключення живлення у серверній кімнаті корпусу А.",
+          resolution: "",
+          slm_deadline: []
+        ),
+        EXO.itsm_incident(
+          id: :lists.nth(3, inc_ids),
+          req: [],
+          service: "bankruptcy",
+          priority: :medium,
+          status: :accepted,
+          assignee: "Коваленко С.Г.",
+          description: "API повертає помилку 500 при запиті переліку справ за датою.",
+          resolution: "",
+          slm_deadline: []
+        ),
+        EXO.itsm_incident(
+          id: :lists.nth(4, inc_ids),
+          req: [],
+          service: "court_decisions_images",
+          priority: :low,
+          status: :resolved,
+          assignee: "Бойко Д.Р.",
+          description: "Затримка у формуванні образів рішень понад 2 хвилини.",
+          resolution: "Збільшено потужність черги обробки зображень. Затримки усунуто.",
+          slm_deadline: []
+        ),
+        EXO.itsm_incident(
+          id: :lists.nth(5, inc_ids),
+          req: [],
+          service: "court_cases_scheduled",
+          priority: :medium,
+          status: :escalated,
+          assignee: "Мороз Л.В.",
+          description: "Відсутні дані про призначені справи за 01.06.2026 у відповіді API.",
+          resolution: "",
+          slm_deadline: []
+        ),
+        EXO.itsm_incident(
+          id: :lists.nth(6, inc_ids),
+          req: [],
+          service: "court_decisions_hyperlinks",
+          priority: :high,
+          status: :in_progress,
+          assignee: "Лисенко А.Ю.",
+          description: "Гіперпосилання в рішеннях ЄДРСР ведуть на застарілі URL нормативних актів.",
+          resolution: "",
+          slm_deadline: []
         )
       ]
       :lists.map(fn x -> :kvs.append(x, ~c"/itsm/incidents") end, sample_incidents)
+      Logger.info("Seeded #{length(sample_incidents)} incidents into /itsm/incidents")
     end
 
-    # Support ticket for client МВС (phone 3) in Work state (BPE)
-    if :kvs.all(~c"/itsm/reqs") == [] do
-      req_id = :kvs.seq([], [])
-      date = :calendar.now_to_datetime(:erlang.timestamp())
-      req = EXO.itsm_req(
-        id: req_id,
-        initiator: "3",
+    # ── Step 3: seed change request ───────────────────────────────────────────
+    if :kvs.all(~c"/itsm/changes") == [] do
+      :timer.sleep(1)
+      chg_id = :kvs.seq([], [])
+      chg = EXO.itsm_change(
+        id: chg_id,
+        req: req_id,
         service: "internet",
-        title: "Проблеми зі зв'язком в офісі",
-        description: "Не працює VPN-з'єднання з центральним сервером",
+        title: "Модернізація магістрального кабелю",
+        description: "Заміна пошкодженої ділянки оптоволокна для відновлення стабільного з'єднання.",
+        risk_level: :medium,
+        impact: :medium,
         status: :in_progress,
-        created_at: date,
-        closed_at: []
+        change_manager: "Адміністратор",
+        backout_plan: "Переключення на резервний мідний кабель"
       )
-      :kvs.append(req, ~c"/itsm/reqs")
+      :kvs.append(chg, ~c"/itsm/changes")
 
-      # Start BPE Incident workflow and progress it to Work state
-      case :bpe.start(BPE.Incident.def(), [req]) do
-        {:ok, proc_id} ->
-          :bpe.next(proc_id) # New -> Triaje
-          :bpe.next(proc_id) # Triaje -> Work
-          Logger.info("Seeded BPE incident workflow #{proc_id} in Work state for ticket #{req_id}")
+      case :bpe.start(BPE.Change.def(), [chg]) do
+        {:ok, chg_proc_id} ->
+          :bpe.next(chg_proc_id) # New -> Analyze
+          Logger.info("Seeded BPE change workflow #{chg_proc_id} in Analyze state for change #{chg_id}")
         err ->
-          Logger.warning("Failed to start BPE workflow in boot: #{inspect(err)}")
-      end
-
-      # Seed Change request (1 item)
-      if :kvs.all(~c"/itsm/changes") == [] do
-        chg_id = :kvs.seq([], [])
-        chg = EXO.itsm_change(
-          id: chg_id,
-          req: req_id,
-          service: "internet",
-          title: "Модернізація магістрального кабелю",
-          description: "Заміна пошкодженої ділянки оптоволокна",
-          risk_level: :medium,
-          impact: :medium,
-          status: :in_progress,
-          change_manager: "Адміністратор",
-          backout_plan: "Переключення на резервний мідний кабель"
-        )
-        :kvs.append(chg, ~c"/itsm/changes")
-
-        # Start BPE Change workflow and progress it to Analyze state
-        case :bpe.start(BPE.Change.def(), [chg]) do
-          {:ok, chg_proc_id} ->
-            :bpe.next(chg_proc_id) # New -> Analyze
-            Logger.info("Seeded BPE change workflow #{chg_proc_id} in Analyze state for change #{chg_id}")
-          err ->
-            Logger.warning("Failed to start BPE Change workflow in boot: #{inspect(err)}")
-        end
+          Logger.warning("Failed to start BPE Change workflow in boot: #{inspect(err)}")
       end
     end
+
     :ok
   end
 end

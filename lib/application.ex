@@ -11,6 +11,14 @@ defmodule EXOSCULAT do
       {Bandit, scheme: :http, port: 8004, plug: Sample.Static}
     ]
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: Sample.Supervisor)
+    result = Supervisor.start_link(children, strategy: :one_for_one, name: Sample.Supervisor)
+
+    # Seed demo data on startup (idempotent — skips already-populated feeds)
+    Task.start(fn ->
+      :timer.sleep(500)
+      EXO.boot()
+    end)
+
+    result
   end
 end
