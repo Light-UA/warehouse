@@ -1,18 +1,17 @@
-defmodule Program.Form do
+defmodule ITSM.Ticket.Form do
   require EXO
   require NITRO
   require FORM
-  require BPE
 
-  def doc(), do: "Форма вводу тарифної програми"
-  def id, do: EXO.program()
+  def doc(), do: "Форма створення звернення (Ticket)"
+  def id, do: EXO.itsm_req()
 
-  def new(name, _program, _) do
-    :erlang.put(:type_program_none, :type)
+  def new(name, _req, _) do
+    :erlang.put(:priority_itsm_req_none, :low)
 
     FORM.document(
-      name: :form.atom([:progran, name]),
-      sections: [FORM.sec(name: ["Створення тарифної моделі: "])],
+      name: :form.atom([:itsm_req, name]),
+      sections: [FORM.sec(name: ["Створити нове звернення: "])],
       buttons: [
         FORM.but(
           id: :decline,
@@ -24,32 +23,24 @@ defmodule Program.Form do
         FORM.but(
           id: :proceed,
           name: :proceed,
-          title: "Створити",
+          title: "Надіслати",
           class: [:button, :sgreen],
           sources: [
-            :name_program_none,
-            :type_program_none,
-            :date_program_none,
-            :formula_program_none
+            :service_itsm_req_none,
+            :title_itsm_req_none,
+            :description_itsm_req_none,
+            :priority_itsm_req_none
           ],
-          postback: {:CreateTariff, :form.atom([:program, name])}
+          postback: {:CreateTicket, :form.atom([:itsm_req, name])}
         )
       ],
       fields: [
         FORM.field(
-          id: :name,
-          name: :name,
-          type: :string,
-          title: "Ім'я тарифу",
-          labelClass: :label
-        ),
-        FORM.field(
-          id: :type,
-          name: :type,
-          title: "Тип:",
+          id: :service,
+          name: :service,
+          title: "Послуга:",
           type: :select,
           default: :internet,
-          postback: {:TypeProgram, :form.atom([:program, name])},
           options: [
             FORM.opt(name: :internet, checked: true, title: "Інтернет"),
             FORM.opt(name: :electricity, title: "Електропостачання"),
@@ -60,18 +51,30 @@ defmodule Program.Form do
           ]
         ),
         FORM.field(
-          id: :date,
-          name: :date,
-          type: :calendar,
-          title: "Дата",
+          id: :title,
+          name: :title,
+          type: :string,
+          title: "Тема звернення:",
           labelClass: :label
         ),
         FORM.field(
-          id: :formula,
-          name: :formula,
+          id: :description,
+          name: :description,
           type: :string,
-          title: "Формула:",
+          title: "Детальний опис:",
           labelClass: :label
+        ),
+        FORM.field(
+          id: :priority,
+          name: :priority,
+          title: "Терміновість (пріоритет):",
+          type: :select,
+          default: :low,
+          options: [
+            FORM.opt(name: :low, checked: true, title: "Низька"),
+            FORM.opt(name: :medium, title: "Середня"),
+            FORM.opt(name: :high, title: "Висока")
+          ]
         )
       ]
     )

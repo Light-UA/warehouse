@@ -26,7 +26,14 @@ config :form,
     Client.Form,
     Program.Form,
     Program.Row,
-    Account.Form
+    Account.Form,
+    ITSM.Service.Form,
+    ITSM.Service.Row,
+    ITSM.Incident.Form,
+    ITSM.Incident.Row,
+    ITSM.Change.Form,
+    ITSM.Change.Row,
+    ITSM.Ticket.Form
   ]
 
 config :bpe,

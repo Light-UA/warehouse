@@ -47,7 +47,7 @@ defmodule EXO.Service do
       NITRO.panel(
         class: :td,
         style: "height: 25px;",
-        body: NITRO.link(id: "gas", postback: {:showTariffs, "gas"}, body: "Газ")
+        body: NITRO.link(id: "bankruptcy", postback: {:showTariffs, "bankruptcy"}, body: "ІДС \"Банкрутство\"")
       )
     )
 
@@ -56,7 +56,25 @@ defmodule EXO.Service do
       NITRO.panel(
         class: :td,
         style: "height: 25px;",
-        body: NITRO.link(id: "iol", postback: {:showTariffs, "oil"}, body: "Нафта")
+        body: NITRO.link(id: "court_decisions_images", postback: {:showTariffs, "court_decisions_images"}, body: "Систематизація образів рішень")
+      )
+    )
+
+    :nitro.insert_bottom(
+      :serviceTypes,
+      NITRO.panel(
+        class: :td,
+        style: "height: 25px;",
+        body: NITRO.link(id: "court_cases_scheduled", postback: {:showTariffs, "court_cases_scheduled"}, body: "Систематизація призначених справ")
+      )
+    )
+
+    :nitro.insert_bottom(
+      :serviceTypes,
+      NITRO.panel(
+        class: :td,
+        style: "height: 25px;",
+        body: NITRO.link(id: "court_decisions_hyperlinks", postback: {:showTariffs, "court_decisions_hyperlinks"}, body: "Гіперпосилання в рішеннях")
       )
     )
 

@@ -25,6 +25,7 @@ defmodule ADM.FORM do
     :nitro.insert_bottom(:stand, NITRO.panel(id: :col3, class: "form-column"))
 
     :application.get_env(:form, :registry, [])
+    |> :lists.reverse()
     |> Enum.with_index()
     |> Enum.each(fn {mod, index} ->
       col_id =

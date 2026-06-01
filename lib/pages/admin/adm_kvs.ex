@@ -49,6 +49,7 @@ defmodule ADM.KVS do
     do:
       :writer
       |> :kvs.all()
+      |> Enum.uniq_by(fn KVS.writer(id: i) -> i end)
       |> :lists.sort()
       |> Enum.map(fn KVS.writer(id: i, count: c) ->
         :nitro.insert_bottom(

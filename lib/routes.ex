@@ -27,6 +27,10 @@ defmodule EXO.Route do
   def route(<<"app/backoffice/reports", _::binary>>), do: EXO.Login
   def route(<<"app/backoffice/tariffs", _::binary>>), do: EXO.Tariffs
   def route(<<"app/backoffice/domains", _::binary>>), do: EXO.Domains
+  def route(<<"app/backoffice/itsm_services", _::binary>>), do: EXO.ITSM.Services
+  def route(<<"app/backoffice/itsm_incidents", _::binary>>), do: EXO.ITSM.Incidents
+  def route(<<"app/backoffice/itsm_changes", _::binary>>), do: EXO.ITSM.Changes
+  def route(<<"app/backoffice/console", _::binary>>), do: EXO.ITSM.Console
   def route(<<"app/backoffice/profile", _::binary>>), do: EXO.User
   def route(<<"app/backoffice/user", _::binary>>), do: EXO.User
 
@@ -35,6 +39,7 @@ defmodule EXO.Route do
   def route(<<"app/consumer/profile", _::binary>>), do: EXO.Login
   def route(<<"app/consumer/consume", _::binary>>), do: EXO.Login
   def route(<<"app/consumer/service", _::binary>>), do: EXO.Service
+  def route(<<"app/consumer/portal", _::binary>>), do: EXO.ITSM.Portal
 
   # Login
 

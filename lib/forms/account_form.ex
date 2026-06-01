@@ -67,9 +67,11 @@ defmodule Account.Form do
           postback: {:TypeAccount, :form.atom([:account, name])},
           options: [
             FORM.opt(name: :internet, checked: true, title: "Інтернет"),
-            FORM.opt(name: :oil, title: "Нафта"),
-            FORM.opt(name: :gas, title: "Газ"),
-            FORM.opt(name: :electricity, title: " Електроенергія")
+            FORM.opt(name: :electricity, title: "Електропостачання"),
+            FORM.opt(name: :bankruptcy, title: "ІДС \"Банкрутство\""),
+            FORM.opt(name: :court_decisions_images, title: "Сервіс систематизації образів судових рішень"),
+            FORM.opt(name: :court_cases_scheduled, title: "Сервіс систематизації призначених справ"),
+            FORM.opt(name: :court_decisions_hyperlinks, title: "Сервіс гіперпосилань у судових рішеннях")
           ]
         ),
         FORM.field(

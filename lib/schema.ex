@@ -5,7 +5,22 @@ defmodule EXO do
 
   Module.register_attribute(__MODULE__, :exo_fields_accum, accumulate: true)
 
-  @schema [:account, :client, :card, :transaction, :currency, :field, :program, :phone]
+  @schema [
+    :account,
+    :client,
+    :card,
+    :transaction,
+    :currency,
+    :field,
+    :program,
+    :phone,
+    :itsm_service,
+    :itsm_req,
+    :itsm_incident,
+    :itsm_change,
+    :itsm_ci,
+    :itsm_sla
+  ]
 
   Enum.each(
     @schema,
@@ -29,6 +44,8 @@ defmodule EXO do
     try do
       EXO.Boot.clients()
       EXO.Boot.programs()
+      EXO.Boot.accounts()
+      EXO.Boot.itsm()
     rescue
       _ -> :skip
     end

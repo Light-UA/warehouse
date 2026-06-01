@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <title>КОНСОЛЬ ПІДТРИМКИ</title>
+    <link rel="stylesheet" href="../css/blank.css" />
+    <link rel="stylesheet" href="../css/forms.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+</head>
+
+<body>
+
+    <nav>
+        <a href='console.htm' style="background:#ededed;">КОНСОЛЬ</a>
+        <a href='itsm_services.htm'>СЕРВІСИ</a>
+        <a href='itsm_incidents.htm'>ІНЦИДЕНТИ</a>
+        <a href='itsm_changes.htm'>ЗМІНИ</a>
+        <a href='tariffs.htm'>ТАРИФИ</a>
+        <a href='domains.htm'>РОЛІ</a>
+        <a href='reports.htm'>ЗВІТНІСТЬ</a>
+        <a href='../login.htm'>ВИХІД</a>
+    </nav>
+
+    <aside style="width: 25%; float: left; border-right: 1px solid #ccc; padding-right: 15px;">
+        <article>
+            <section>
+                <h2>Черга звернень</h2>
+                <p>Оберіть звернення зі списку для опрацювання.</p>
+                <br>
+                <div id="ticketsQueue" class="trGroup">Завантаження...</div>
+            </section>
+        </article>
+    </aside>
+
+    <main style="width: 48%; float: left; padding: 0 15px;">
+        <section>
+            <h2>Деталі звернення</h2>
+            <div id="ticketDetail" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-height: 200px;">
+                Оберіть звернення з черги для перегляду деталей.
+            </div>
+            
+            <h2 style="margin-top: 30px;">Прогрес життєвого циклу (BPE)</h2>
+            <div id="workflowActions" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                Дії життєвого циклу BPE...
+            </div>
+        </section>
+    </main>
+
+    <aside id="sidebarBilling" style="width: 23%; float: right; padding-left: 15px; border-left: 1px solid #ccc;">
+        <h2>Профіль Клієнта (Білінг)</h2>
+        <div id="clientBillingInfo" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            Інформація про рахунки клієнта...
+        </div>
+    </aside>
+
+    <footer style="clear: both; text-align: center; padding: 40px 0; font-size: 0.85em; color: #64748b;">
+        Зроблено з любов'ю <span class="heart">❤</span> до BPE | 
+        <a href="../admin/bpe.htm" style="color: #64748b; text-decoration: none;">⚙️ Адміністрування BPE</a>
+    </footer>
+
+    <script src='https://ws.n2o.dev/priv/utf8.js'></script>
+    <script src='https://ws.n2o.dev/priv/bert.js'></script>
+    <script src='https://ws.n2o.dev/priv/heart.js'></script>
+    <script src='https://ws.n2o.dev/priv/ieee754.js'></script>
+    <script src='https://ws.n2o.dev/priv/n2o.js'></script>
+    <script src='https://ws.n2o.dev/priv/ftp.js'></script>
+    <script src='https://nitro.n2o.dev/priv/js/nitro.js'></script>
+    <script>host = location.hostname; port = 8051;</script>
+    <script>protos = [$bert]; N2O_start();</script>
+
+</body>
+
+</html>
