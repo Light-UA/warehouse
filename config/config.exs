@@ -2,7 +2,7 @@ import Config
 
 config :n2o,
   pickler: :n2o_secret,
-  app: :exosculat,
+  app: :warehouse,
   mq: :n2o_syn,
   port: 8051,
   trace: false,
