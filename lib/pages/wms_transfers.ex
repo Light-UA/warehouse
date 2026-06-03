@@ -1,4 +1,4 @@
-defmodule EXO.WMS.Services do
+defmodule EXO.WMS.Transfers do
   require EXO
   require NITRO
   require FORM
@@ -17,9 +17,9 @@ defmodule EXO.WMS.Services do
         body: [
           NITRO.panel(class: :column10, body: "ID"),
           NITRO.panel(class: :column20, body: "WEAPON"),
-          NITRO.panel(class: :column30, body: "REASON"),
-          NITRO.panel(class: :column20, body: "STATUS"),
-          NITRO.panel(class: :column20, body: "RESULT")
+          NITRO.panel(class: :column20, body: "FROM STORAGE"),
+          NITRO.panel(class: :column30, body: "TO STORAGE"),
+          NITRO.panel(class: :column20, body: "STATUS")
         ]
       )
     )
@@ -27,29 +27,29 @@ defmodule EXO.WMS.Services do
     :nitro.insert_bottom(:ctrl, NITRO.link(id: :new_order, body: "Новий наряд", postback: :new_order, class: [:button, :sgreen]))
     :nitro.hide(:frms)
 
-    records = :kvs.all(EXO.wms_service_order())
+    records = :kvs.all(EXO.wms_transfer())
     Enum.each(records, fn order ->
-      id = EXO.wms_service_order(order, :id)
-      :nitro.insert_bottom(:tableRow, WMS.ServiceOrder.Row.new(id, order, []))
+      id = EXO.wms_transfer(order, :id)
+      :nitro.insert_bottom(:tableRow, WMS.TransferOrder.Row.new(id, order, []))
     end)
   end
 
-  def event({:CreateSO, _form}) do
+  def event({:CreateTO, _form}) do
     id = :kvs.seq([], [])
-    weapon = :nitro.to_binary(:nitro.q(:weapon_wms_service_order_none))
-    reason = :nitro.to_binary(:nitro.q(:reason_wms_service_order_none))
-    order = EXO.wms_service_order(
+    weapon = :nitro.to_binary(:nitro.q(:weapon_wms_transfer_none))
+    from_storage = :nitro.to_binary(:nitro.q(:from_storage_wms_transfer_none))
+    to_storage = :nitro.to_binary(:nitro.q(:to_storage_wms_transfer_none))
+    order = EXO.wms_transfer(
       id: id,
       weapon: weapon,
-      reason: reason,
-      service_status: "Init",
-      result: ""
+      from_storage: from_storage,
+      to_storage: to_storage,
+      transfer_status: "Init"
     )
     :kvs.put(order)
-    :nitro.insert_bottom(:tableRow, WMS.ServiceOrder.Row.new(id, order, []))
+    :nitro.insert_bottom(:tableRow, WMS.TransferOrder.Row.new(id, order, []))
     # Init BPE Process
-    :bpe.start(WMS.BPE.ServiceOrder.def(), [])
-    # Here you'd normally link the BPE process to the document and advance the state.
+    :bpe.start(WMS.BPE.LogisticsOrder.def(), [])
     :nitro.hide(:frms)
     :nitro.show(:ctrl)
   end
@@ -57,7 +57,7 @@ defmodule EXO.WMS.Services do
   def event(:new_order) do
     :nitro.hide(:ctrl)
     :nitro.clear(:frms)
-    mod = WMS.ServiceOrder.Form
+    mod = WMS.TransferOrder.Form
     form = mod.new(:none, mod.id(), [])
     :nitro.insert_bottom(:frms, :form.new(form, mod.id(), []))
     :nitro.show(:frms)
