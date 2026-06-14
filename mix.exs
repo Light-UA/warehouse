@@ -7,12 +7,6 @@ defmodule EXO.Mixfile do
       version: "4.5.6",
       description: "WMS Warehouse Management System",
       package: package(),
-      overrides: [
-      {:rocksdb,
-       [
-         {:pre_hooks, [{:compile, "patch -N -p1 < ../../../../patches/rocksdb-snappy.patch || true"}]}
-       ]}
-    ],
       deps: deps()
     ]
   end
@@ -37,8 +31,7 @@ defmodule EXO.Mixfile do
       {:plug, "~> 1.18"},
       {:bandit, "~> 1.11"},
       {:websock_adapter, "~> 0.5"},
-      {:rocksdb, "~> 2.6.2"},
-      # Transitional Erlang-Elixir Tier Stack
+      {:rocksdb, github: "emqx/erlang-rocksdb", tag: "1.8.0-emqx-11", override: true},
       {:form, "~> 11.4.15"},
       {:bpe, "~> 8.12.4"},
       {:nitro, "~> 11.4.16"},

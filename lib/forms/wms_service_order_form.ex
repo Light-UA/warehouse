@@ -25,7 +25,8 @@ defmodule WMS.ServiceOrder.Form do
           class: [:button, :sgreen],
           sources: [
             :weapon_wms_service_order_none,
-            :reason_wms_service_order_none
+            :reason_wms_service_order_none,
+            :received_by_wms_service_order_none
           ],
           postback: {:CreateSO, :form.atom([:wms_service_order, name])}
         )
@@ -43,6 +44,13 @@ defmodule WMS.ServiceOrder.Form do
           name: :reason,
           type: :string,
           title: "Причина обслуговування",
+          labelClass: :label
+        ),
+        FORM.field(
+          id: :received_by,
+          name: :received_by,
+          type: :string,
+          title: "Прийняв",
           labelClass: :label
         )
       ]

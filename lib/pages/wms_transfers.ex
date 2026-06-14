@@ -27,7 +27,7 @@ defmodule EXO.WMS.Transfers do
     :nitro.insert_bottom(:ctrl, NITRO.link(id: :new_order, body: "Новий наряд", postback: :new_order, class: [:button, :sgreen]))
     :nitro.hide(:frms)
 
-    records = :kvs.all(EXO.wms_transfer())
+    records = :kvs.all(~c"/wms/transfers")
     Enum.each(records, fn order ->
       id = EXO.wms_transfer(order, :id)
       :nitro.insert_bottom(:tableRow, WMS.TransferOrder.Row.new(id, order, []))
@@ -46,7 +46,7 @@ defmodule EXO.WMS.Transfers do
       to_storage: to_storage,
       transfer_status: "Init"
     )
-    :kvs.put(order)
+    :kvs.append(order, ~c"/wms/transfers")
     :nitro.insert_bottom(:tableRow, WMS.TransferOrder.Row.new(id, order, []))
     # Init BPE Process
     :bpe.start(WMS.BPE.LogisticsOrder.def(), [])

@@ -37,26 +37,60 @@ defmodule EXO.WMS.Weapons do
     :nitro.show(:frms)
   end
 
+  def next_weapon_id() do
+    existing_numbers =
+      :kvs.all(~c"/wms/weapons")
+      |> Enum.map(fn weapon ->
+        weapon
+        |> EXO.wms_weapon(:id)
+        |> :nitro.to_binary()
+        |> String.trim()
+      end)
+      |> Enum.filter(fn id ->
+        String.starts_with?(id, "WPN-")
+      end)
+      |> Enum.map(fn id ->
+        id
+        |> String.replace_prefix("WPN-", "")
+        |> String.to_integer()
+      end)
+
+    next_number =
+      case existing_numbers do
+        [] -> 1
+        numbers -> Enum.max(numbers) + 1
+      end
+
+    "WPN-" <> String.pad_leading(Integer.to_string(next_number), 3, "0")
+  end
+
   def event({:SaveWeapon, _}) do
     serial_number = :serial_number_wms_weapon_none |> :nitro.q()
     model = :weapon_model_wms_weapon_none |> :nitro.q()
     owner = :owner_wms_weapon_none |> :nitro.q()
+    license = :license_wms_weapon_none |> :nitro.q()
     location = :storage_location_wms_weapon_none |> :nitro.q()
     status = :status_wms_weapon_none |> :nitro.q()
-    id = :kvs.seq([], [])
 
-    weapon = EXO.wms_weapon(
-      id: id,
-      serial_number: serial_number,
-      weapon_model: model,
-      owner: owner,
-      storage_location: location,
-      status: status
-    )
+    id = next_weapon_id()
+
+    weapon =
+      EXO.wms_weapon(
+        id: id,
+        serial_number: serial_number,
+        weapon_model: model,
+        owner: owner,
+        license: license,
+        storage_location: location,
+        status: status
+      )
+
     :kvs.append(weapon, ~c"/wms/weapons")
 
-    row = WMS.Weapon.Row.new(:form.atom([:row, id]), weapon, [])
-    :nitro.insert_top(:tableRow, :form.new(row, weapon, []))
+    :nitro.insert_top(
+      :tableRow,
+      WMS.Weapon.Row.new(:form.atom([:row, id]), weapon, [])
+    )
 
     :nitro.hide(:frms)
     :nitro.show(:ctrl)
@@ -75,13 +109,17 @@ defmodule EXO.WMS.Weapons do
     NITRO.panel(
       id: :header,
       class: :th,
-      body: [
-        NITRO.panel(class: :column10, body: "ID"),
-        NITRO.panel(class: :column20, body: "Серійний номер"),
-        NITRO.panel(class: :column20, body: "Модель"),
-        NITRO.panel(class: :column30, body: "Власник"),
-        NITRO.panel(class: :column20, body: "Статус")
-      ]
+
+        body: [
+          NITRO.panel(class: :column10, body: "ID"),
+          NITRO.panel(class: :column20, body: "Серійний номер"),
+          NITRO.panel(class: :column20, body: "Модель"),
+          NITRO.panel(class: :column20, body: "Власник"),
+          NITRO.panel(class: :column10, body: "Ліцензія"),
+          NITRO.panel(class: :column20, body: "Локація"),
+          NITRO.panel(class: :column20, body: "Статус")
+        ]
+
     )
   end
 end

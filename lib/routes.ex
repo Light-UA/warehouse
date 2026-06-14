@@ -29,13 +29,16 @@ defmodule EXO.Route do
 
   # WMS Portals
 
+  # WMS Portals
+
   def route(<<"app/wms/operator/weapons", _::binary>>), do: EXO.WMS.Weapons
+  def route(<<"app/wms/parts", _::binary>>), do: EXO.WMS.Parts
   def route(<<"app/wms/repair/orders", _::binary>>), do: EXO.WMS.Services
   def route(<<"app/wms/logistics/transfers", _::binary>>), do: EXO.WMS.Transfers
   def route(<<"app/wms/operator", _::binary>>), do: EXO.WMS.Operator
   def route(<<"app/wms/repair", _::binary>>), do: EXO.WMS.Repair
   def route(<<"app/wms/logistics", _::binary>>), do: EXO.WMS.Logistics
-
+  def route(<<"app/wms/service_events", _::binary>>), do: EXO.WMS.ServiceEvents
   # Login
 
   def route(<<"app/login", _::binary>>), do: EXO.Login

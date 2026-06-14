@@ -28,7 +28,8 @@ defmodule WMS.Weapon.Form do
             :weapon_model_wms_weapon_none,
             :owner_wms_weapon_none,
             :storage_location_wms_weapon_none,
-            :status_wms_weapon_none
+            :status_wms_weapon_none,
+            :license_wms_weapon_none
           ],
           postback: {:SaveWeapon, :form.atom([:wms_weapon, name])}
         )
@@ -73,6 +74,13 @@ defmodule WMS.Weapon.Form do
             FORM.opt(name: :maintenance, title: "На обслуговуванні"),
             FORM.opt(name: :decommissioned, title: "Списана")
           ]
+        ),
+        FORM.field(
+          id: :license,
+          name: :license,
+          type: :string,
+          title: "Ліцензія/дозвіл",
+          labelClass: :label
         )
       ]
     )
