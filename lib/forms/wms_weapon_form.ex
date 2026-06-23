@@ -15,7 +15,7 @@ defmodule WMS.Weapon.Form do
           id: :decline,
           name: :decline,
           title: "Відміна",
-          class: [:cancel],
+          class: [:button, :cancel],
           postback: {:Close, []}
         ),
         FORM.but(

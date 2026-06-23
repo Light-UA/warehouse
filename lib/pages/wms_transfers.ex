@@ -91,41 +91,9 @@ defmodule EXO.WMS.Transfers do
       current_id == wanted_id
     end)
   end
-def find_weapon(weapon_id) do
-    wanted_id = normalize_id(weapon_id)
-
-    :kvs.all(~c"/wms/weapons")
-    |> Enum.find(fn weapon ->
-      current_id =
-        weapon
-        |> EXO.wms_weapon(:id)
-        |> normalize_id()
-
-      current_id == wanted_id
-    end)
-end
-def weapon_available_for_service?(weapon_id) do
-      weapon = find_weapon(weapon_id)
-
-      if weapon != nil do
-        status =
-          weapon
-          |> EXO.wms_weapon(:status)
-          |> :nitro.to_binary()
-          |> String.trim()
-
-        status == "На озброєнні" or status == "active"
-      else
-        false
-      end
-    end
 
   def update_weapon_location(weapon_id, new_location) do
-    weapon =
-      :kvs.all(~c"/wms/weapons")
-      |> Enum.find(fn weapon ->
-        normalize_id(EXO.wms_weapon(weapon, :id)) == normalize_id(weapon_id)
-      end)
+    weapon = WMS.WeaponRules.find_weapon(weapon_id)
 
     if weapon != nil do
       updated_weapon =
@@ -139,35 +107,43 @@ def weapon_available_for_service?(weapon_id) do
     end
   end
 
-def create_weapon_event_from_transfer(transfer, new_status) do
-  if new_status == "Delivered" do
-    event =
-      EXO.wms_weapon_event(
-        id: :kvs.seq([], []),
-        weapon: EXO.wms_transfer(transfer, :weapon),
-        event_type: "TRANSFER_COMPLETED",
-        actor: "Logistics",
-        event_status: "completed",
-        from_storage: EXO.wms_transfer(transfer, :from_storage),
-        to_storage: EXO.wms_transfer(transfer, :to_storage),
-        related_service_order: ""
+  def update_weapon_status(weapon_id, new_status) do
+    weapon = WMS.WeaponRules.find_weapon(weapon_id)
 
-      )
+    if weapon != nil do
+      updated_weapon =
+        EXO.wms_weapon(
+          weapon,
+          status: new_status
+        )
+
+      :kvs.remove(weapon, ~c"/wms/weapons")
+      :kvs.append(updated_weapon, ~c"/wms/weapons")
+    end
+  end
+
+  def current_time() do
+    DateTime.utc_now()
+    |> DateTime.to_iso8601()
+  end
+
+  def create_weapon_event_from_transfer(transfer, new_status) do
+    if new_status == "Delivered" do
+      event =
+        EXO.wms_weapon_event(
+          id: :kvs.seq([], []),
+          weapon: EXO.wms_transfer(transfer, :weapon),
+          event_type: "TRANSFER_COMPLETED",
+          actor: "Logistics",
+          event_status: "completed",
+          from_storage: EXO.wms_transfer(transfer, :from_storage),
+          to_storage: EXO.wms_transfer(transfer, :to_storage),
+          related_service_order: "",
+          created_at: current_time()
+        )
 
       :kvs.append(event, ~c"/wms/weapon_events")
-  end
-end
-
-  def show_error(message) do
-    :nitro.clear(:transfer_error)
-
-    :nitro.insert_bottom(
-      :transfer_error,
-      NITRO.panel(
-        class: :validation_error,
-        body: message
-      )
-    )
+    end
   end
 
   def build_form() do
@@ -197,30 +173,33 @@ end
     to_storage = :nitro.to_binary(:nitro.q(:to_storage_wms_transfer_none))
 
     cond do
-      weapon != [] and not weapon_exists(weapon) ->
-        show_error("Помилка: зброї з таким ID не існує")
+      weapon != [] and not WMS.WeaponRules.weapon_exists?(weapon) ->
+        WMS.UI.show_error(:transfer_error,
+        "Помилка: зброї з таким ID не існує"
+        )
 
-      weapon != [] and not weapon_available_for_service?(weapon) ->
-        show_error(
+      weapon != [] and not WMS.WeaponRules.available_for_transfer?(weapon) ->
+        WMS.UI.show_error(
+          :transfer_error,
           "Помилка: заявку на переміщення можна створити тільки для зброї зі статусом 'На озброєнні'"
         )
 
       true ->
-      order =
-        EXO.wms_transfer(
-          id: id,
-          weapon: weapon,
-          from_storage: from_storage,
-          to_storage: to_storage,
-          transfer_status: "Init"
-        )
+        order =
+          EXO.wms_transfer(
+            id: id,
+            weapon: weapon,
+            from_storage: from_storage,
+            to_storage: to_storage,
+            transfer_status: "Init"
+          )
 
-      :kvs.append(order, ~c"/wms/transfers")
-      :nitro.insert_bottom(:tableRow, WMS.TransferOrder.Row.new(id, order, []))
-      # Init BPE Process
-      :bpe.start(WMS.BPE.LogisticsOrder.def(), [])
-      :nitro.hide(:frms)
-      :nitro.show(:ctrl)
+        :kvs.append(order, ~c"/wms/transfers")
+        :nitro.insert_bottom(:tableRow, WMS.TransferOrder.Row.new(id, order, []))
+        # Init BPE Process
+        :bpe.start(WMS.BPE.LogisticsOrder.def(), [])
+        :nitro.hide(:frms)
+        :nitro.show(:ctrl)
     end
   end
 
@@ -249,8 +228,12 @@ end
       :kvs.append(updated_transfer, ~c"/wms/transfers")
 
       case new_status do
+        "Transit" ->
+          update_weapon_status(weapon_id, "transfer")
+
         "Delivered" ->
           update_weapon_location(weapon_id, to_storage)
+          update_weapon_status(weapon_id, "active")
           create_weapon_event_from_transfer(transfer, new_status)
 
         _ ->

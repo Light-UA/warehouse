@@ -11,6 +11,7 @@ defmodule WMS.Weapon.Row do
   def status_title("maintenance"), do: "На обслуговуванні"
   def status_title("destroyed"), do: "Знищено"
   def status_title("decommissioned"), do: "Списана"
+  def status_title("transfer"), do: "У дорозі"
   def status_title(value), do: value
 
   def new(name, weapon, _) do

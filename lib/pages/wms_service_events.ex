@@ -47,18 +47,6 @@ defmodule EXO.WMS.ServiceEvents do
     :nitro.insert_bottom(:frms, form)
   end
 
-  def show_error(message) do
-    :nitro.clear(:service_event_error)
-
-    :nitro.insert_bottom(
-      :service_event_error,
-      NITRO.panel(
-        class: :validation_error,
-        body: message
-      )
-    )
-  end
-
   def event(:create) do
     build_form()
     :nitro.hide(:ctrl)
@@ -93,7 +81,7 @@ defmodule EXO.WMS.ServiceEvents do
     |> Enum.any?(fn part ->
       part_serial =
         part
-        |> Exo.wms_part(:serial_number)
+        |> EXO.wms_part(:serial_number)
         |> normalize_id()
 
       installed_weapon =
@@ -147,13 +135,13 @@ defmodule EXO.WMS.ServiceEvents do
 
     cond do
       service_order !=[] and not service_order_exists(service_order)->
-        show_error("Помилка: сервісного наряду з таким ID не існує")
+        WMS.UI.show_error(:service_event_error, "Помилка: сервісного наряду з таким ID не існує")
       weapon != [] and not weapon_exists(weapon) ->
-        show_error("Помилка: зброї з таким ID не існує")
+        WMS.UI.show_error(:service_event_error, "Помилка: зброї з таким ID не існує")
       old_part != [] and not part_exists(old_part) ->
-        show_error("Помилка: старої деталі з таким серійним номером не існує")
+        WMS.UI.show_error(:service_event_error, "Помилка: старої деталі з таким серійним номером не існує")
       new_part != [] and not part_exists(new_part) ->
-        show_error("Помилка: нової деталі з таким серійним номером не існує")
+        WMS.UI.show_error(:service_event_error, "Помилка: нової деталі з таким серійним номером не існує")
 
       true ->
         id = :kvs.seq([], [])

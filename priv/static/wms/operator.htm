@@ -1,22 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-
-<style>
-    #operator_actions #ctrl {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    #operator_actions .button {
-        min-width: 180px;
-        text-align: center;
-        justify-content: center;
-    }
-</style>
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,6 +8,29 @@
     <link rel="stylesheet" href="../css/blank.css" />
     <link rel="stylesheet" href="../css/forms.css" />
     <link rel="stylesheet" href="../css/admin.css" />
+
+    <style>
+        section #ctrl {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 12px !important;
+            width: 100% !important;
+        }
+
+        section #ctrl>a {
+            flex: 1 1 0 !important;
+            display: flex !important;
+            width: auto !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            margin: 0 !important;
+            justify-content: center !important;
+            align-items: center !important;
+            text-align: center !important;
+            min-height: 42px !important;
+            white-space: nowrap !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -44,9 +51,9 @@
                 <h2 id="pageTitle">ПОРТАЛ ВЧ (НАЯВНА ЗБРОЯ)</h2>
                 <p id="pageDesc">Реєстр зброї та оформлення заявок.</p>
                 <br>
-                <div id="operator_actions">
-                    <div id="ctrl"> </div>
-                </div>
+                <!-- <div id="operator_actions"> -->
+                <div id="ctrl"></div>
+                <!-- </div> -->
                 <div id="frms"></div>
                 <br>
             </section><br><br>

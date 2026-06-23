@@ -7,6 +7,8 @@ defmodule EXO.WMS.Operator do
     :nitro.clear(:tableRow)
     :nitro.clear(:ctrl)
     :nitro.clear(:frms)
+    # :nitro.show(:ctrl)
+    :nitro.hide(:frms)
 
     :nitro.insert_top(:tableHead, header())
 
@@ -37,7 +39,6 @@ defmodule EXO.WMS.Operator do
         body: "Додати зброю",
         postback: :add_weapon,
         class: [:button, :sgreen]
-
       )
     )
 
@@ -49,28 +50,68 @@ defmodule EXO.WMS.Operator do
     end)
   end
 
+  def blank?(value) do
+    value
+    |> :nitro.to_binary()
+    |> String.trim()
+    |> Kernel.==("")
+  end
 
-def event({:SaveWeapon, form}) do
-  EXO.WMS.Weapons.event({:SaveWeapon, form})
-  event(:init)
-end
+  def event({:SaveWeapon, data}) do
+    serial_number = :nitro.q(:serial_number_wms_weapon_none)
+    weapon_model = :nitro.q(:weapon_model_wms_weapon_none)
+    owner = :nitro.q(:owner_wms_weapon_none)
+    storage_location = :nitro.q(:storage_location_wms_weapon_none)
+    status = :nitro.q(:status_wms_weapon_none)
+    license = :nitro.q(:license_wms_weapon_none)
 
-def event({:Close, data}) do
-  EXO.WMS.Weapons.event({:Close, data})
-  event(:init)
-end
+    cond do
+      blank?(serial_number) ->
+        WMS.UI.show_error(:operator_error, "Помилка: серійний номер обов’язковий")
 
+      blank?(weapon_model) ->
+        WMS.UI.show_error(:operator_error, "Помилка: модель зброї обов’язкова")
 
-def event(:add_weapon) do
-  :nitro.hide(:ctrl)
-  :nitro.clear(:frms)
+      blank?(owner) ->
+        WMS.UI.show_error(:operator_error, "Помилка: власник обов’язковий")
 
-  mod = WMS.Weapon.Form
-  form = mod.new(:none, mod.id(), [])
+      blank?(storage_location) ->
+        WMS.UI.show_error(:operator_error, "Помилка: локація зберігання обов’язкова")
 
-  :nitro.insert_bottom(:frms, :form.new(form, mod.id(), []))
-  :nitro.show(:frms)
-end
+      blank?(status) ->
+        WMS.UI.show_error(:operator_error, "Помилка: статус обов’язковий")
+
+      blank?(license) ->
+        WMS.UI.show_error(:operator_error, "Помилка: ліцензія/дозвіл обов’язкова")
+
+      true ->
+        EXO.WMS.Weapons.event({:SaveWeapon, data})
+        event(:init)
+    end
+  end
+
+  def event({:Close, _data}) do
+    :nitro.clear(:frms)
+    :nitro.hide(:frms)
+  end
+
+  def event(:add_weapon) do
+    :nitro.clear(:frms)
+
+    :nitro.insert_bottom(
+      :frms,
+      NITRO.panel(
+        id: :operator_error,
+        body: []
+      )
+    )
+
+    mod = WMS.Weapon.Form
+    form = mod.new(:none, mod.id(), [])
+
+    :nitro.insert_bottom(:frms, :form.new(form, mod.id(), []))
+    :nitro.show(:frms)
+  end
 
   def event(:create_service_order) do
     :nitro.redirect("repair.htm")

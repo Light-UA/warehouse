@@ -98,37 +98,6 @@ defmodule EXO.WMS.Services do
     end)
   end
 
-def find_weapon(weapon_id) do
-    wanted_id = normalize_id(weapon_id)
-
-    :kvs.all(~c"/wms/weapons")
-    |> Enum.find(fn weapon ->
-      current_id =
-        weapon
-        |> EXO.wms_weapon(:id)
-        |> normalize_id()
-
-      current_id == wanted_id
-    end)
-end
-
-def weapon_available_for_service?(weapon_id) do
-      weapon = find_weapon(weapon_id)
-
-      if weapon != nil do
-        status =
-          weapon
-          |> EXO.wms_weapon(:status)
-          |> :nitro.to_binary()
-          |> String.trim()
-
-        status == "На озброєнні" or status == "active"
-      else
-        false
-      end
-    end
-
-
   def update_weapon_status(weapon_id, new_status) do
     weapon =
       :kvs.all(~c"/wms/weapons")
@@ -183,18 +152,6 @@ def weapon_available_for_service?(weapon_id) do
     end
   end
 
-  def show_error(message) do
-    :nitro.clear(:service_order_error)
-
-    :nitro.insert_bottom(
-      :service_order_error,
-      NITRO.panel(
-        class: :validation_error,
-        body: message
-      )
-    )
-  end
-
   def build_form() do
     :nitro.clear(:frms)
 
@@ -222,11 +179,11 @@ def weapon_available_for_service?(weapon_id) do
     received_by = :nitro.to_binary(:nitro.q(:received_by_wms_service_order_none))
 
     cond do
-      weapon != [] and not weapon_exists(weapon) ->
-        show_error("Помилка: зброї з таким ID не існує")
+      weapon != [] and not WMS.WeaponRules.weapon_exists?(weapon) ->
+        WMS.UI.show_error(:service_order_error, "Помилка: зброї з таким ID не існує")
 
-      weapon != [] and not weapon_available_for_service?(weapon) ->
-        show_error(
+      weapon != [] and not WMS.WeaponRules.available_for_service?(weapon) ->
+        WMS.UI.show_error(:service_order_error,
           "Помилка: сервісний наряд можна створити тільки для зброї зі статусом 'На озброєнні'"
         )
 
@@ -300,5 +257,4 @@ def weapon_available_for_service?(weapon_id) do
   end
 
   def event(_), do: :ok
-
 end

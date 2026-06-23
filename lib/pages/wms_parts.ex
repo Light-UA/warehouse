@@ -48,18 +48,6 @@ defmodule EXO.WMS.Parts do
     :nitro.insert_bottom(:frms, form)
   end
 
-  def show_error(message) do
-    :nitro.clear(:part_error)
-
-    :nitro.insert_bottom(
-      :part_error,
-      NITRO.panel(
-        class: :validation_error,
-        body: message
-      )
-    )
-  end
-
   def event(:create) do
     build_form()
     :nitro.hide(:ctrl)
@@ -85,7 +73,7 @@ defmodule EXO.WMS.Parts do
     manufacturer = :manufacturer_wms_part_none |> :nitro.q()
 
     if installed_in_weapon != [] and not weapon_exists(installed_in_weapon) do
-      show_error("Помилка: зброї з таким ID не існує")
+     WMS.UI.show_error(:part_error, "Помилка: зброї з таким ID не існує")
     else
       id = :kvs.seq([], [])
 
