@@ -43,8 +43,34 @@ defmodule WMS.WeaponRules do
   end
 
 
+def clean(value) do
+  value
+  |> :nitro.to_binary()
+  |> String.trim()
+
+end
+
+
   def available_for_transfer?(weapon_id) do
     status = weapon_status(weapon_id)
     status == "active" or status == "На озброєнні"
   end
+
+def serial_number_exists?(serial_number) do
+  wanted =
+    serial_number
+    |> :nitro.to_binary()
+    |> String.trim()
+
+  :kvs.all(~c"/wms/weapons")
+  |> Enum.any?(fn weapon ->
+    current =
+      weapon
+      |> EXO.wms_weapon(:serial_number)
+      |> :nitro.to_binary()
+      |> String.trim()
+
+    current == wanted
+  end)
+end
 end

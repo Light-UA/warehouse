@@ -65,12 +65,12 @@ defmodule EXO.WMS.Weapons do
   end
 
   def event({:SaveWeapon, _}) do
-    serial_number = :serial_number_wms_weapon_none |> :nitro.q()
-    model = :weapon_model_wms_weapon_none |> :nitro.q()
-    owner = :owner_wms_weapon_none |> :nitro.q()
-    license = :license_wms_weapon_none |> :nitro.q()
-    location = :storage_location_wms_weapon_none |> :nitro.q()
-    status = :status_wms_weapon_none |> :nitro.q()
+    serial_number = :serial_number_wms_weapon_none |> :nitro.q() |> WMS.WeaponRules.clean()
+    model = :weapon_model_wms_weapon_none |> :nitro.q() |> WMS.WeaponRules.clean()
+    owner = :owner_wms_weapon_none |> :nitro.q() |> WMS.WeaponRules.clean()
+    license = :license_wms_weapon_none |> :nitro.q() |> WMS.WeaponRules.clean()
+    location = :storage_location_wms_weapon_none |> :nitro.q() |> WMS.WeaponRules.clean()
+    status = :status_wms_weapon_none |> :nitro.q() |> WMS.WeaponRules.clean()
 
     id = next_weapon_id()
 

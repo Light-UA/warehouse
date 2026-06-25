@@ -57,13 +57,19 @@ defmodule EXO.WMS.Operator do
     |> Kernel.==("")
   end
 
+  def clean(value) do
+    value
+    |> :nitro.to_binary()
+    |> String.trim()
+  end
+
   def event({:SaveWeapon, data}) do
-    serial_number = :nitro.q(:serial_number_wms_weapon_none)
-    weapon_model = :nitro.q(:weapon_model_wms_weapon_none)
-    owner = :nitro.q(:owner_wms_weapon_none)
-    storage_location = :nitro.q(:storage_location_wms_weapon_none)
-    status = :nitro.q(:status_wms_weapon_none)
-    license = :nitro.q(:license_wms_weapon_none)
+    serial_number = :nitro.q(:serial_number_wms_weapon_none) |> clean()
+    weapon_model = :nitro.q(:weapon_model_wms_weapon_none) |> clean()
+    owner = :nitro.q(:owner_wms_weapon_none) |> clean()
+    storage_location = :nitro.q(:storage_location_wms_weapon_none) |> clean()
+    status = :nitro.q(:status_wms_weapon_none) |> clean()
+    license = :nitro.q(:license_wms_weapon_none) |> clean()
 
     cond do
       blank?(serial_number) ->
@@ -83,6 +89,9 @@ defmodule EXO.WMS.Operator do
 
       blank?(license) ->
         WMS.UI.show_error(:operator_error, "Помилка: ліцензія/дозвіл обов’язкова")
+
+      WMS.WeaponRules.serial_number_exists?(serial_number) ->
+        WMS.UI.show_error(:operator_error, "Помилка: зброя з таким серійним номером вже існує")
 
       true ->
         EXO.WMS.Weapons.event({:SaveWeapon, data})
