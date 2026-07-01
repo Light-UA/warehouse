@@ -1,7 +1,7 @@
 defmodule WMS.Operator.Toolbar do
   require NITRO
 
-  def new() do
+  def list_mode() do
     NITRO.panel(
       class: :operator_toolbar,
       body: [
@@ -33,7 +33,7 @@ defmodule WMS.Operator.Toolbar do
           body: [
             NITRO.input(
               id: :weapon_search,
-              placeholder: "Пошук: ID, серійний номер, модель, власник"
+              placeholder: "ID, серійний номер, модель, власник"
             ),
             NITRO.select(
               id: :weapon_status_filter,
@@ -50,13 +50,30 @@ defmodule WMS.Operator.Toolbar do
             NITRO.link(
               body: "Пошук",
               postback: :search_weapon,
-              source: [:weapon_search, :weapon_status_filter],
-              class: [:button, :sgreen]
+              class: [:button, :sgreen],
+              source: [:weapon_search, :weapon_status_filter]
             ),
             NITRO.link(
               body: "Очистити",
               postback: :clear_weapon_search,
               class: [:button, :sgreen]
+            )
+          ]
+        )
+      ]
+    )
+  end
+
+  def form_mode(title) do
+    NITRO.panel(
+      class: :operator_toolbar,
+      body: [
+        NITRO.panel(
+          class: :toolbar_actions,
+          body: [
+            NITRO.panel(
+              class: :button,
+              body: title
             )
           ]
         )

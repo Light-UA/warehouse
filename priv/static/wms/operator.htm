@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,81 +7,9 @@
     <link rel="stylesheet" href="../css/blank.css" />
     <link rel="stylesheet" href="../css/forms.css" />
     <link rel="stylesheet" href="../css/admin.css" />
-
-    <style>
-        .operator_toolbar {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-        }
-
-        .notice {
-            margin: 12px 0;
-            padding: 12px 14px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            background: #f9fafb;
-            text-align: center;
-        }
-
-        .toolbar_actions,
-        .toolbar_filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            width: 100%;
-        }
-
-        .toolbar_actions>a {
-            flex: 1 1 150px;
-            height: 42px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .toolbar_filters input {
-            flex: 1 1 280px;
-            height: 42px;
-            box-sizing: border-box;
-            padding: 0 12px;
-        }
-
-        .toolbar_filters select {
-            flex: 0 1 220px;
-            height: 42px;
-            box-sizing: border-box;
-            padding: 0 10px;
-        }
-
-        .toolbar_filters>a {
-            flex: 0 0 110px;
-            height: 42px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .notice {
-            margin: 12px 0;
-            padding: 12px 14px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            background: #f9fafb;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/operator.css" />
 </head>
-
 <body>
-
     <nav>
         <a href='../wms/operator.htm'>ВЧ (ОПЕРАТОР)</a>
         <a href='../wms/parts.htm'>ДЕТАЛІ</a>
@@ -99,25 +26,20 @@
                 <h2 id="pageTitle">ПОРТАЛ ВЧ (НАЯВНА ЗБРОЯ)</h2>
                 <p id="pageDesc">Реєстр зброї та оформлення заявок.</p>
                 <br>
-                <!-- <div id="operator_actions"> -->
                 <div id="ctrl"></div>
-                <!-- </div> -->
                 <div id="frms"></div>
                 <br>
             </section><br><br>
-            
             <div class="table">
                 <div id="tableHead" class="trGroup"></div>
                 <div id="tableRow" class="trGroup"></div>
             </div>
-
             <section
                 style="display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid var(--border-color); margin-top: 20px;">
                 <small>WMS Рівень 1 <span class="heart">❤</span> N2O/BPE</small>
             </section>
         </article>
     </aside>
-
     <script src='https://ws.n2o.dev/priv/utf8.js'></script>
     <script src='https://ws.n2o.dev/priv/bert.js'></script>
     <script src='https://ws.n2o.dev/priv/heart.js'></script>
@@ -127,7 +49,5 @@
     <script src='https://nitro.n2o.dev/priv/js/nitro.js'></script>
     <script>host = location.hostname; port = 8051;</script>
     <script>protos = [$bert]; N2O_start();</script>
-
 </body>
-
 </html>

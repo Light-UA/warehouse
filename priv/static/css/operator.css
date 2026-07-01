@@ -1,0 +1,70 @@
+.operator_toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+}
+
+.toolbar_actions,
+.toolbar_filters {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.toolbar_actions {
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.toolbar_filters {
+    display: flex;
+
+    flex-wrap: nowrap;
+
+    gap: 8px;
+
+    align-items: center;
+
+    width: 100%;
+}
+
+.toolbar_actions>a {
+    flex: 0 0 auto;
+    min-width: 170px;
+}
+
+.toolbar_filters input {
+    flex: 1 1 auto;
+    min-width: 180px;
+}
+
+.toolbar_filters select {
+    flex: 0 0 150px;
+}
+
+.toolbar_filters>a {
+    flex: 0 0 85px;
+}
+
+.toolbar_actions>a,
+.toolbar_filters>a,
+.toolbar_filters input,
+.toolbar_filters select {
+    height: 42px;
+    box-sizing: border-box;
+}
+
+.toolbar_actions>a,
+.toolbar_filters>a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.toolbar_filters input,
+.toolbar_filters select {
+    padding: 0 12px;
+}

@@ -51,6 +51,31 @@ defmodule WMS.WeaponRules do
     status == "active" or status == "На озброєнні"
   end
 
+  def serial_number_used_by_another_weapon?(serial_number, current_weapon_id) do
+    wanted_serial =
+      serial_number
+      |> clean()
+
+      current_id =
+        current_weapon_id
+        |> clean()
+
+    :kvs.all(~c"/wms/weapons")
+    |> Enum.any?(fn weapon ->
+      weapon_id =
+        weapon
+        |> EXO.wms_weapon(:id)
+        |> clean()
+
+        weapon_serial =
+          weapon
+          |> EXO.wms_weapon(:serial_number)
+          |> clean()
+
+        weapon_serial == wanted_serial and weapon_id != current_id
+    end)
+  end
+
   def clean(value) do
     value
     |> :nitro.to_binary()

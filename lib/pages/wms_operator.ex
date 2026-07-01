@@ -5,19 +5,20 @@ defmodule EXO.WMS.Operator do
   def event(:init) do
     :nitro.clear(:tableHead)
     :nitro.clear(:tableRow)
-    :nitro.clear(:ctrl)
     :nitro.clear(:frms)
     :nitro.hide(:frms)
 
     :nitro.insert_top(:tableHead, header())
 
-    :nitro.insert_bottom(:ctrl, WMS.Operator.Toolbar.new())
+    render_toolbar(:list)
 
     records = :kvs.all(~c"/wms/weapons")
     render_weapons(records)
   end
 
   def event(:clear_weapon_search) do
+    render_toolbar(:list)
+
     records = :kvs.all(~c"/wms/weapons")
     render_weapons(records)
   end
@@ -69,9 +70,6 @@ defmodule EXO.WMS.Operator do
     cond do
       records == [] ->
         :nitro.clear(:tableRow)
-
-      true ->
-        render_weapons(records)
 
       true ->
         render_weapons(records)
@@ -139,9 +137,11 @@ defmodule EXO.WMS.Operator do
   def event({:Close, _data}) do
     :nitro.clear(:frms)
     :nitro.hide(:frms)
+    render_toolbar(:list)
   end
 
   def event(:add_weapon) do
+    render_toolbar({:form, "Додавання зброї"})
     :nitro.clear(:frms)
 
     :nitro.insert_bottom(
@@ -164,6 +164,8 @@ defmodule EXO.WMS.Operator do
 
     if weapon != nil do
       :nitro.clear(:frms)
+
+      render_toolbar({:form, "Редагування зброї: #{:nitro.to_binary(id)}"})
 
       :nitro.insert_bottom(
         :frms,
@@ -225,6 +227,9 @@ defmodule EXO.WMS.Operator do
       blank?(license) ->
         WMS.UI.show_error(:operator_error, "Помилка: ліцензія/дозвіл обов’язкова")
 
+      WMS.WeaponRules.serial_number_used_by_another_weapon?(serial_number, id) ->
+        WMS.UI.show_error(:operator_error, "Помилка: зброя з таким серійним номером вже існує")
+
       true ->
         updated_weapon =
           EXO.wms_weapon(
@@ -240,6 +245,16 @@ defmodule EXO.WMS.Operator do
 
         event(:init)
     end
+  end
+
+  def render_toolbar(:list) do
+    :nitro.clear(:ctrl)
+    :nitro.insert_bottom(:ctrl, WMS.Operator.Toolbar.list_mode())
+  end
+
+  def render_toolbar({:form, title}) do
+    :nitro.clear(:ctrl)
+    :nitro.insert_bottom(:ctrl, WMS.Operator.Toolbar.form_mode(title))
   end
 
   def event(:create_service_order) do
